@@ -27,6 +27,7 @@ export default function PageEditor({
   const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState<SaveStatus>({ kind: "idle" });
   const [deleting, setDeleting] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
   const [mode, setMode] = useState<Mode>("edit");
 
   const patch = useCallback((p: Partial<PageInput>) => {
@@ -59,6 +60,25 @@ export default function PageEditor({
         kind: "error",
         message: e instanceof Error ? e.message : "Network error",
       });
+    }
+  }
+
+  async function onDuplicate() {
+    setDuplicating(true);
+    try {
+      const res = await fetch(`/api/admin/pages/${id}/duplicate`, {
+        method: "POST",
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(body.error ?? `Duplicate failed (${res.status})`);
+        setDuplicating(false);
+        return;
+      }
+      router.push(`/admin/pages/${body.page.id}`);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Network error");
+      setDuplicating(false);
     }
   }
 
@@ -139,6 +159,14 @@ export default function PageEditor({
               View live ↗
             </a>
           )}
+          <button
+            type="button"
+            onClick={onDuplicate}
+            disabled={duplicating}
+            className="rounded-full border border-ink-line bg-paper px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-soft transition hover:bg-paper-raised disabled:opacity-50"
+          >
+            {duplicating ? "Duplicating…" : "Duplicate"}
+          </button>
           <button
             type="button"
             onClick={onDelete}

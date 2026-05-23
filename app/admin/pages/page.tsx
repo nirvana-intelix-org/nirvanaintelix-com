@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import PagesTableActions from "./PagesTableActions";
 import { getSession } from "@/lib/auth/session";
 import { listPages } from "@/lib/content/pages";
 
@@ -71,24 +72,11 @@ export default async function PagesList() {
                     {new Date(p.updatedAt).toLocaleString()}
                   </td>
                   <td className="px-5 py-3">
-                    <div className="flex items-center justify-end gap-3">
-                      {p.published && (
-                        <a
-                          href={`/${p.slug}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="font-mono text-[11px] uppercase tracking-wider text-ink-muted hover:text-ink"
-                        >
-                          View ↗
-                        </a>
-                      )}
-                      <Link
-                        href={`/admin/pages/${p.id}`}
-                        className="font-mono text-[11px] uppercase tracking-wider text-copper hover:text-ink"
-                      >
-                        Edit →
-                      </Link>
-                    </div>
+                    <PagesTableActions
+                      id={p.id}
+                      slug={p.slug}
+                      published={p.published}
+                    />
                   </td>
                 </tr>
               ))}

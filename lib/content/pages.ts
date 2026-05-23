@@ -76,3 +76,32 @@ export async function updatePage(id: string, input: unknown) {
 export async function deletePage(id: string) {
   await getDb().delete(pages).where(eq(pages.id, id));
 }
+
+export async function duplicatePage(id: string) {
+  const src = await getPageById(id);
+  if (!src) return null;
+  // Find a non-colliding slug — append "-copy", then "-copy-2", ...
+  let attempt = 1;
+  let nextSlug = `${src.slug}-copy`;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const exists = await getPageBySlug(nextSlug);
+    if (!exists) break;
+    attempt += 1;
+    nextSlug = `${src.slug}-copy-${attempt}`;
+  }
+  const nextTitle =
+    attempt === 1 ? `${src.title} (copy)` : `${src.title} (copy ${attempt})`;
+  const [row] = await getDb()
+    .insert(pages)
+    .values({
+      slug: nextSlug,
+      title: nextTitle,
+      description: src.description,
+      blocks: src.blocks,
+      // duplicates start as drafts so they don't compete with the original
+      published: false,
+    })
+    .returning();
+  return row;
+}

@@ -15,12 +15,23 @@ NGINX_CONF=/etc/nginx/sites-available/${DOMAIN}.conf
 ENV_FILE=/etc/nirvanaintelix-com.env
 PM2_NAME=cloudsites-${TENANT}-prod
 PORT=3002
+UPLOAD_DIR=/var/www/nirvanaintelix-uploads
 
 # === 0. Sanity: env file must exist ===
 if [ ! -f "${ENV_FILE}" ]; then
   echo "❌ ${ENV_FILE} missing — create it with DATABASE_URL, ADMIN_PASSWORD, SESSION_SECRET, then re-run."
   exit 1
 fi
+
+# Ensure UPLOAD_DIR is set in env (admin image upload destination, served by nginx via /uploads/)
+if ! grep -q "^UPLOAD_DIR=" "${ENV_FILE}"; then
+  echo "UPLOAD_DIR=${UPLOAD_DIR}" >> "${ENV_FILE}"
+fi
+
+# Ensure upload dir exists with safe perms
+mkdir -p "${UPLOAD_DIR}"
+chown -R root:root "${UPLOAD_DIR}"
+chmod 755 "${UPLOAD_DIR}"
 
 # === 1. Clone or update repo ===
 echo ">> 1. Clone or update repo"
@@ -83,7 +94,15 @@ server {
   ssl_certificate     /etc/letsencrypt/live/webziq.com/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/webziq.com/privkey.pem;
 
-  client_max_body_size 5m;
+  client_max_body_size 6m;
+
+  # Admin-uploaded images live outside the build dir so they survive deploys.
+  location /uploads/ {
+    alias ${UPLOAD_DIR}/;
+    expires 30d;
+    add_header Cache-Control "public, max-age=2592000";
+    try_files \$uri =404;
+  }
 
   location / {
     proxy_pass http://127.0.0.1:${PORT};

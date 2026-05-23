@@ -1,7 +1,22 @@
 import { redirect, notFound } from "next/navigation";
-import SectionEditor from "./SectionEditor";
+import Link from "next/link";
+import HeaderForm from "@/components/admin/forms/HeaderForm";
+import HeroForm from "@/components/admin/forms/HeroForm";
+import AboutForm from "@/components/admin/forms/AboutForm";
+import CapabilitiesForm from "@/components/admin/forms/CapabilitiesForm";
+import ProjectsForm from "@/components/admin/forms/ProjectsForm";
+import ContactForm from "@/components/admin/forms/ContactForm";
+import FooterForm from "@/components/admin/forms/FooterForm";
 import { getSession } from "@/lib/auth/session";
-import { readSection } from "@/lib/content/reader";
+import {
+  getHeader,
+  getHero,
+  getAbout,
+  getCapabilities,
+  getProjects,
+  getContact,
+  getFooter,
+} from "@/lib/content/reader";
 import {
   SECTIONS,
   SECTION_LABELS,
@@ -35,19 +50,50 @@ export default async function SectionPage({
     notFound();
   }
   const name = section as SectionName;
-  const content = await readSection(name);
+
+  let form: React.ReactNode;
+  switch (name) {
+    case "header":
+      form = <HeaderForm initial={await getHeader()} />;
+      break;
+    case "hero":
+      form = <HeroForm initial={await getHero()} />;
+      break;
+    case "about":
+      form = <AboutForm initial={await getAbout()} />;
+      break;
+    case "capabilities":
+      form = <CapabilitiesForm initial={await getCapabilities()} />;
+      break;
+    case "projects":
+      form = <ProjectsForm initial={await getProjects()} />;
+      break;
+    case "contact":
+      form = <ContactForm initial={await getContact()} />;
+      break;
+    case "footer":
+      form = <FooterForm initial={await getFooter()} />;
+      break;
+  }
 
   return (
     <div>
-      <h1 className="font-serif text-4xl text-ink">{SECTION_LABELS[name]}</h1>
-      <p className="text-body mt-2 max-w-2xl text-sm">{SECTION_HINTS[name]}</p>
-
-      <div className="mt-6">
-        <SectionEditor
-          section={name}
-          initial={JSON.stringify(content, null, 2)}
-        />
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="font-serif text-4xl text-ink">{SECTION_LABELS[name]}</h1>
+          <p className="text-body mt-2 max-w-2xl text-sm">
+            {SECTION_HINTS[name]}
+          </p>
+        </div>
+        <Link
+          href={`/admin/${name}/raw`}
+          className="font-mono text-[11px] uppercase tracking-wider text-ink-muted hover:text-ink"
+        >
+          Edit as JSON →
+        </Link>
       </div>
+
+      <div className="mt-6 pb-6">{form}</div>
     </div>
   );
 }

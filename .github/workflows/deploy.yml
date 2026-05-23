@@ -1,0 +1,31 @@
+name: Deploy nirvanaintelix.com
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-nirvanaintelix
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy on production server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script_stop: true
+          command_timeout: 10m
+          script: |
+            set -e
+            bash /root/deploy-nirvanaintelix.sh
+            echo ""
+            echo "Live: https://nirvanaintelix.com"
+            echo "HEAD: $(cd /var/www/cloudsites-nirvanaintelix-com && git rev-parse --short HEAD)"

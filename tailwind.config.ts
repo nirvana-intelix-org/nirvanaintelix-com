@@ -4,6 +4,17 @@ const config: Config = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./content/**/*.json",
+  ],
+  safelist: [
+    "md:col-span-5",
+    "md:col-span-6",
+    "md:col-span-7",
+    "md:col-span-12",
+    "aspect-[16/10]",
+    "aspect-[21/9]",
+    { pattern: /^from-\[#[0-9a-fA-F]{6}\]$/ },
+    { pattern: /^to-\[#[0-9a-fA-F]{6}\]$/ },
   ],
   theme: {
     extend: {

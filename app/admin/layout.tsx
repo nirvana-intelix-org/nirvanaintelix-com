@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import AdminTabBar from "./AdminTabBar";
+import AdminSidebar from "./AdminSidebar";
 import { getSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="border-b border-ink-line bg-paper-raised/60 backdrop-blur-sm">
+      <header className="sticky top-0 z-30 border-b border-ink-line bg-paper-raised/80 backdrop-blur">
         <div className="container-px flex h-14 items-center justify-between">
           <Link href="/admin" className="flex items-center gap-3">
             <span className="grid h-7 w-7 place-items-center rounded-md bg-ink font-serif text-xs text-paper">
@@ -33,7 +33,7 @@ export default async function AdminLayout({
               href="/"
               target="_blank"
               rel="noreferrer"
-              className="font-mono text-[11px] uppercase tracking-wider text-ink-muted hover:text-ink"
+              className="hidden font-mono text-[11px] uppercase tracking-wider text-ink-muted hover:text-ink md:inline"
             >
               View live site ↗
             </a>
@@ -49,9 +49,18 @@ export default async function AdminLayout({
             )}
           </div>
         </div>
-        {loggedIn && <AdminTabBar />}
       </header>
-      <main className="container-px py-8">{children}</main>
+
+      {loggedIn ? (
+        <div className="md:flex">
+          <AdminSidebar />
+          <main className="min-w-0 flex-1 px-5 py-8 md:px-10">
+            {children}
+          </main>
+        </div>
+      ) : (
+        <main className="container-px py-10">{children}</main>
+      )}
     </div>
   );
 }

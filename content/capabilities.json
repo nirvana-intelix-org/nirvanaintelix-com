@@ -1,0 +1,88 @@
+{
+  "sectionLabel": "02 / Capabilities",
+  "heading": "What we",
+  "headingEm": "build",
+  "intro": "Eight kinds of products under one roof. Every category here is something we've shipped to production and continue to operate in the MENA market.",
+  "groups": [
+    {
+      "n": "A",
+      "title": "AI-Driven Commerce",
+      "items": [
+        "AI shopping assistants",
+        "OpenAI catalog content",
+        "Behavioral recommendations",
+        "Conversational support"
+      ]
+    },
+    {
+      "n": "B",
+      "title": "Headless & Composable Commerce",
+      "items": [
+        "BigCommerce builds",
+        "Custom storefronts",
+        "Checkout customization",
+        "Payment integrations"
+      ]
+    },
+    {
+      "n": "C",
+      "title": "Content & Education Platforms",
+      "items": [
+        "AI-assisted publishing",
+        "Reading & certification flows",
+        "Children's story generation",
+        "Bilingual content pipelines"
+      ]
+    },
+    {
+      "n": "D",
+      "title": "Marketplaces & Classifieds",
+      "items": [
+        "Vertical classifieds",
+        "Listing distribution",
+        "Multi-social syndication",
+        "AI ad-copy generation"
+      ]
+    },
+    {
+      "n": "E",
+      "title": "Community & Social Networks",
+      "items": [
+        "Member profiles",
+        "Groups, blogs, forums",
+        "Job & event boards",
+        "Activity feeds"
+      ]
+    },
+    {
+      "n": "F",
+      "title": "Healthcare & Vertical SaaS",
+      "items": [
+        "Practitioner directories",
+        "Service advertising",
+        "Audience targeting",
+        "Compliance-aware content"
+      ]
+    },
+    {
+      "n": "G",
+      "title": "Logistics & Operations",
+      "items": [
+        "Pilgrim baggage delivery",
+        "Carrier integrations",
+        "Booking flows",
+        "Co-working operations"
+      ]
+    },
+    {
+      "n": "H",
+      "title": "Foundation",
+      "items": [
+        "Next.js · TypeScript",
+        "Node.js APIs · PostgreSQL",
+        "BigCommerce · Stripe / Tap / Razorpay",
+        "Google Cloud · Docker · CI/CD"
+      ]
+    }
+  ]
+}

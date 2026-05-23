@@ -1,6 +1,9 @@
 #!/bin/bash
 # Server-side deploy script for nirvanaintelix.com
-# Cloned on the server; called by the GitHub Action.
+# Runs Next.js as a long-lived PM2 process behind an nginx reverse proxy.
+# Loads runtime secrets (DATABASE_URL, ADMIN_PASSWORD, SESSION_SECRET) from
+# /etc/nirvanaintelix-com.env which lives OUTSIDE the repo and is never
+# overwritten by deploys.
 
 set -e
 
@@ -8,9 +11,18 @@ TENANT=nirvanaintelix-com
 DOMAIN=nirvanaintelix.com
 REPO=https://github.com/nirvana-intelix-org/nirvanaintelix-com.git
 SRC=/var/www/cloudsites-${TENANT}
-WEBROOT=/var/www/${DOMAIN}
 NGINX_CONF=/etc/nginx/sites-available/${DOMAIN}.conf
+ENV_FILE=/etc/nirvanaintelix-com.env
+PM2_NAME=cloudsites-${TENANT}-prod
+PORT=3002
 
+# === 0. Sanity: env file must exist ===
+if [ ! -f "${ENV_FILE}" ]; then
+  echo "❌ ${ENV_FILE} missing — create it with DATABASE_URL, ADMIN_PASSWORD, SESSION_SECRET, then re-run."
+  exit 1
+fi
+
+# === 1. Clone or update repo ===
 echo ">> 1. Clone or update repo"
 mkdir -p /var/www
 if [ -d "${SRC}/.git" ]; then
@@ -22,48 +34,64 @@ else
   cd ${SRC}
 fi
 
+# === 2. Install + build ===
 echo ">> 2. npm install"
 npm install --no-audit --no-fund
-
-echo ">> 3. Build static export"
+echo ">> 3. Build Next.js"
 npm run build
 
-echo ">> 4. Publish to ${WEBROOT}"
-mkdir -p ${WEBROOT}
-rsync -a --delete ${SRC}/out/ ${WEBROOT}/
-chown -R www-data:www-data ${WEBROOT}
+# === 3. Apply DB schema + seed if empty ===
+echo ">> 4. Push DB schema"
+set -a
+. "${ENV_FILE}"
+set +a
+npx drizzle-kit push --force
+echo ">> 5. Seed missing sections"
+npm run db:seed
 
-echo ">> 5. Write/refresh nginx server block"
-cat > ${NGINX_CONF} <<'EOF'
-# nirvanaintelix.com — served from /var/www/nirvanaintelix.com
-# Cloudflare proxies HTTPS and may forward HTTP; both paths handled.
+# === 4. PM2 process ===
+echo ">> 6. (Re)start PM2"
+if pm2 describe ${PM2_NAME} > /dev/null 2>&1; then
+  pm2 restart ${PM2_NAME} --update-env
+else
+  pm2 start npm --name ${PM2_NAME} \
+    --cwd ${SRC} \
+    --update-env \
+    -- start
+fi
+pm2 save
+
+# === 5. Nginx reverse proxy (replaces previous static-files block) ===
+echo ">> 7. Write/refresh nginx server block"
+cat > ${NGINX_CONF} <<EOF
 server {
   listen 80;
   server_name nirvanaintelix.com www.nirvanaintelix.com;
 
-  root /var/www/nirvanaintelix.com;
-  index index.html;
-
-  location /_next/static/ {
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-    try_files $uri =404;
-  }
+  client_max_body_size 5m;
 
   location / {
-    try_files $uri $uri.html $uri/index.html =404;
+    proxy_pass http://127.0.0.1:${PORT};
+    proxy_http_version 1.1;
+    proxy_set_header Host \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
   }
-
-  error_page 404 /404.html;
 }
 EOF
 ln -sf ${NGINX_CONF} /etc/nginx/sites-enabled/${DOMAIN}.conf
 
-echo ">> 6. Test + reload nginx"
+echo ">> 8. Test + reload nginx"
 nginx -t
 systemctl reload nginx
 
-echo ">> 7. Verify"
-curl -sI -H "Host: ${DOMAIN}" http://127.0.0.1/ | head -3
+# === 6. Verify ===
 echo ""
-echo "Deployed: https://${DOMAIN}"
+echo "--- Local request via Host header ---"
+curl -sI -H "Host: ${DOMAIN}" "http://127.0.0.1/" | head -3
+echo ""
+echo "✅ Deployed: https://${DOMAIN}"
+echo "   Admin:   https://${DOMAIN}/admin"

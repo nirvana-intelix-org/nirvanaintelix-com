@@ -1,0 +1,17 @@
+{
+  "sectionLabel": "04 / Contact",
+  "heading": "Have an idea for",
+  "headingEm": "region",
+  "body": "We work with founders, brands and operators across the MENA market — from AI-powered commerce builds to Arabic-first content platforms, marketplaces and community products. We'd love to hear what you're building.",
+  "email": "hello@nirvanaintelix.com",
+  "websiteHref": "https://nirvanaintelix.com",
+  "websiteLabel": "nirvanaintelix.com",
+  "vitals": [
+    { "k": "What we do", "v": "Build and operate digital products for the MENA market" },
+    { "k": "Where we are", "v": "Riyadh, KSA · New Delhi, IN" },
+    { "k": "How we work", "v": "End-to-end ownership — design, build, deploy, run" },
+    { "k": "Engagement", "v": "Product partnerships, equity builds, contract delivery" },
+    { "k": "Languages", "v": "Arabic + English, RTL by default" },
+    { "k": "Platform", "v": "Built on our Webziq multi-tenant platform" }
+  ]
+}

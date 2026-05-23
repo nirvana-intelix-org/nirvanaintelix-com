@@ -1,0 +1,29 @@
+{
+  "sectionLabel": "01 / Studio",
+  "heading": "We build products",
+  "headingEm": "ship",
+  "headingTrail": "that {em}.",
+  "quote": "The MENA market doesn't need translated software. It needs products designed for it from day one.",
+  "paragraphs": [
+    "Nirvana Intelix is a product studio. We design, build and operate digital products for the Middle East — Arabic-first UX, local payments, regional logistics, and the cultural and regulatory context that turns a generic SaaS into something people actually use.",
+    "We work across AI-driven commerce, content and education platforms, marketplaces, community networks, healthcare and Islamic technology. Each product on this page is one we've shipped to production and continue to run."
+  ],
+  "principles": [
+    {
+      "k": "Build to ship",
+      "v": "Concept → production, not endless prototypes. Every product on this page is live and operating."
+    },
+    {
+      "k": "Bilingual by default",
+      "v": "Arabic and English UX, RTL-aware components, locale-aware SEO from the first commit."
+    },
+    {
+      "k": "AI where it earns it",
+      "v": "LLMs in catalog content, support, classifieds copy and story generation — only where it changes the unit economics."
+    },
+    {
+      "k": "We run what we build",
+      "v": "Production ownership across deploys, observability and incident response — not just delivery."
+    }
+  ]
+}

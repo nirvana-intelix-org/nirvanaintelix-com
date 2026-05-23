@@ -1,0 +1,34 @@
+{
+  "pillTeal": "Building in MENA — 2026",
+  "pillCorner": "Riyadh · New Delhi",
+  "headlineLead": "Digital products,",
+  "headlineEm": "built for MENA",
+  "headlineTrail": ".",
+  "body": "Nirvana Intelix is a product studio building and operating digital products for the Middle East. We make Webziq — our multi-tenant website platform — and ship our own products on top of it.",
+  "ctaPrimary": "See our products",
+  "ctaPrimaryHref": "#products",
+  "ctaGhost": "Start a project",
+  "ctaGhostHref": "#contact",
+  "stats": [
+    { "k": "9", "v": "Products in production" },
+    { "k": "AR/EN", "v": "Bilingual by default" },
+    { "k": "MENA", "v": "Built for the region" },
+    { "k": "AI-first", "v": "Where it earns its place" }
+  ],
+  "marqueeItems": [
+    "AI Commerce",
+    "Headless Storefronts",
+    "Arabic-first UX",
+    "BigCommerce",
+    "Next.js",
+    "Node.js / TypeScript",
+    "OpenAI",
+    "Marketplaces",
+    "Community Networks",
+    "Islamic Technology",
+    "Healthcare SaaS",
+    "Classifieds Platforms",
+    "Pilgrim Logistics",
+    "Co-working Operations"
+  ]
+}

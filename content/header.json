@@ -1,0 +1,17 @@
+{
+  "brandMark": "NI",
+  "eyebrow": "Product studio",
+  "brandName": "Nirvana Intelix",
+  "brandHref": "#top",
+  "links": [
+    { "n": "01", "label": "Studio", "href": "#about" },
+    { "n": "02", "label": "Capabilities", "href": "#capabilities" },
+    { "n": "03", "label": "Products", "href": "#products" },
+    { "n": "04", "label": "Contact", "href": "#contact" }
+  ],
+  "cta": {
+    "label": "Work with us",
+    "href": "#contact",
+    "showDot": true
+  }
+}

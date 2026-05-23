@@ -64,9 +64,24 @@ pm2 save
 # === 5. Nginx reverse proxy (replaces previous static-files block) ===
 echo ">> 7. Write/refresh nginx server block"
 cat > ${NGINX_CONF} <<EOF
+# HTTP — for Cloudflare Flexible mode + direct origin-IP testing
 server {
   listen 80;
   server_name nirvanaintelix.com www.nirvanaintelix.com;
+  return 301 https://\$host\$request_uri;
+}
+
+# HTTPS — for Cloudflare Full mode (CF -> origin uses 443).
+# Cert is the existing webziq.com Let's Encrypt cert. CF Full mode
+# accepts this (cert hostname mismatch is fine — only strict mode
+# would reject). Replace with a real cert here if you switch CF to
+# Full (strict).
+server {
+  listen 443 ssl http2;
+  server_name nirvanaintelix.com www.nirvanaintelix.com;
+
+  ssl_certificate     /etc/letsencrypt/live/webziq.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/webziq.com/privkey.pem;
 
   client_max_body_size 5m;
 
@@ -76,7 +91,7 @@ server {
     proxy_set_header Host \$host;
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto \$scheme;
+    proxy_set_header X-Forwarded-Proto https;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
   }

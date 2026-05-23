@@ -7,6 +7,8 @@ import {
   sectionSchemas,
   SECTIONS,
   type SectionName,
+  type Header,
+  type Footer,
   type Hero,
   type About,
   type Capabilities,
@@ -33,6 +35,8 @@ async function loadSection<T>(name: SectionName): Promise<T> {
   return sectionSchemas[name].parse(data) as T;
 }
 
+export const getHeader = () => loadSection<Header>("header");
+export const getFooter = () => loadSection<Footer>("footer");
 export const getHero = () => loadSection<Hero>("hero");
 export const getAbout = () => loadSection<About>("about");
 export const getCapabilities = () => loadSection<Capabilities>("capabilities");

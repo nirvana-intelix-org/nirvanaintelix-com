@@ -1,5 +1,29 @@
 import { z } from "zod";
 
+export const headerSchema = z.object({
+  brandMark: z.string(),
+  eyebrow: z.string(),
+  brandName: z.string(),
+  brandHref: z.string(),
+  links: z.array(
+    z.object({
+      n: z.string(),
+      label: z.string(),
+      href: z.string(),
+    })
+  ),
+  cta: z.object({
+    label: z.string(),
+    href: z.string(),
+    showDot: z.boolean(),
+  }),
+});
+
+export const footerSchema = z.object({
+  copyrightTemplate: z.string(),
+  showDot: z.boolean(),
+});
+
 export const heroSchema = z.object({
   pillTeal: z.string(),
   pillCorner: z.string(),
@@ -89,20 +113,42 @@ export const contactSchema = z.object({
   ),
 });
 
-export const SECTIONS = ["hero", "about", "capabilities", "projects", "contact"] as const;
+export const SECTIONS = [
+  "header",
+  "hero",
+  "about",
+  "capabilities",
+  "projects",
+  "contact",
+  "footer",
+] as const;
 export type SectionName = (typeof SECTIONS)[number];
 
 export const sectionSchemas = {
+  header: headerSchema,
   hero: heroSchema,
   about: aboutSchema,
   capabilities: capabilitiesSchema,
   projects: projectsSchema,
   contact: contactSchema,
+  footer: footerSchema,
 } as const;
 
+export type Header = z.infer<typeof headerSchema>;
+export type Footer = z.infer<typeof footerSchema>;
 export type Hero = z.infer<typeof heroSchema>;
 export type About = z.infer<typeof aboutSchema>;
 export type Capabilities = z.infer<typeof capabilitiesSchema>;
 export type Projects = z.infer<typeof projectsSchema>;
 export type Contact = z.infer<typeof contactSchema>;
 export type Project = z.infer<typeof projectSchema>;
+
+export const SECTION_LABELS: Record<SectionName, string> = {
+  header: "Header",
+  hero: "Hero",
+  about: "Studio",
+  capabilities: "Capabilities",
+  projects: "Products",
+  contact: "Contact",
+  footer: "Footer",
+};

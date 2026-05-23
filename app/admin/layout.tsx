@@ -1,16 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import AdminTabBar from "./AdminTabBar";
+import { getSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   title: "Admin · Nirvana Intelix",
   robots: { index: false, follow: false },
 };
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+  const loggedIn = !!session.loggedIn;
+
   return (
     <div className="min-h-screen bg-paper">
       <header className="border-b border-ink-line bg-paper-raised/60 backdrop-blur-sm">
@@ -32,18 +37,21 @@ export default function AdminLayout({
             >
               View live site ↗
             </a>
-            <form action="/api/admin/logout" method="post">
-              <button
-                type="submit"
-                className="font-mono text-[11px] uppercase tracking-wider text-ink-muted hover:text-ink"
-              >
-                Sign out
-              </button>
-            </form>
+            {loggedIn && (
+              <form action="/api/admin/logout" method="post">
+                <button
+                  type="submit"
+                  className="font-mono text-[11px] uppercase tracking-wider text-ink-muted hover:text-ink"
+                >
+                  Sign out
+                </button>
+              </form>
+            )}
           </div>
         </div>
+        {loggedIn && <AdminTabBar />}
       </header>
-      <main className="container-px py-10">{children}</main>
+      <main className="container-px py-8">{children}</main>
     </div>
   );
 }
